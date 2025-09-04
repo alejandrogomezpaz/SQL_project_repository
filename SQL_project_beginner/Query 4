@@ -1,0 +1,24 @@
+WITH top_paying_skills AS (SELECT
+    AVG (salary_year_avg) AS skill_avg_salary,
+    skills_job_dim.skill_id
+FROM
+    job_postings_fact
+LEFT JOIN skills_job_dim ON
+skills_job_dim.job_id = job_postings_fact.job_id
+WHERE
+    job_title_short = 'Data Analyst'
+    AND salary_year_avg IS NOT NULL
+GROUP BY
+    skills_job_dim.skill_id)
+
+
+SELECT
+    skill_avg_salary,
+    skills_dim.skills,
+    skills_dim.skill_id
+FROM top_paying_skills
+LEFT JOIN skills_dim ON
+top_paying_skills.skill_id = skills_dim.skill_id
+ORDER BY
+    skill_avg_salary DESC 
+limit 100;
